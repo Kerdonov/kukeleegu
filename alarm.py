@@ -1,16 +1,14 @@
 from datetime import datetime, timedelta
 from time import sleep
-from threading import Thread
-
-
+from multiprocessing import Process
 
 class Alarm:
-    def __init__(self, hr, min):
-        self.time = datetime.now().replace(hour=hr, minute=min, second=0, microsecond=0)
+    def __init__(self, hr, min, sec=0, name=""):
+        self.time = datetime.now().replace(hour=hr, minute=min, second=sec, microsecond=0)
+        self.name = name
 
         print(f"New alarm for {self.time}")
-        self.__timerthread = Thread(target=self.run, args=())
-        self.__timerthread.daemon = False
+        self.__alarmproc = Process(target=self.__run)
     
     def enable(self):
         self.time_to_alarm = self.time - datetime.now()
@@ -19,18 +17,24 @@ class Alarm:
             print("added day")
             self.time_to_alarm += timedelta(days=1)
         
-        self.__timerthread.start()
+        self.__alarmproc.start()
     
-    def wake_up(self):
-        print("BEEP BEEP BEEP")
+    def disable(self):
+        self.__alarmproc.terminate()
+        print(f"Alarm {self.name} at {self.time} disabled!!!")
+    
+    def __wake_up(self):
+        print(f"BEEP BEEP BEEP {self.name}")
 
-    def run(self):
-        print(f"thread: Alarm {self.time_to_alarm} from now")
+    def __run(self):
+        print(f"proc: Alarm {self.time_to_alarm} from now")
 
         sleep(self.time_to_alarm.seconds)
-        self.wake_up()
+        self.__wake_up()
 
 
 if __name__ == "__main__":
-    examplealarm = Alarm(11, 53)
-    examplealarm.enable()
+   examplealarm = Alarm(16, 58, name="tere hommikust")
+   examplealarm.enable()
+   sleep(5)
+   examplealarm.disable()
