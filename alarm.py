@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from time import sleep
 from multiprocessing import Process, Event
+from random import randrange
 
 
 class Alarm:
@@ -57,18 +58,18 @@ class Alarm:
         print("proc: process exited")
 
 
-if __name__ == "__main__":
-    t = datetime.now() + timedelta(seconds=5)
-    examplealarm1 = Alarm(t.hour, t.minute, sec=t.second, name="tere hommikust")
-    examplealarm1.enable()
 
-    t += timedelta(seconds=10)
-    examplealarm2 = Alarm(t.hour, t.minute, sec=t.second, name="tere õhtust")
-    examplealarm2.enable()
-    
-    sleep(7)
+class RandomAlarm(Alarm):
+    def __init__(self, hr, min, sec=0, name="random äratus"):
+        delta = datetime.now().replace(hour=hr, minute=min, second=sec, microsecond=0) - datetime.now()
+        rand_delta_seconds = randrange(delta.seconds)
+        self.time = datetime.now() + timedelta(seconds=rand_delta_seconds)
+        self.name = name
+
+
+if __name__ == "__main__":
+    t = datetime.now().replace(hour=8, minute=30)
+    examplealarm1 = RandomAlarm(t.hour, t.minute, sec=t.second)
+    examplealarm1.enable()
+    sleep(1)
     examplealarm1.disable()
-    sleep(6)
-    examplealarm2.snooze(5)
-    sleep(8)
-    examplealarm2.disable()
