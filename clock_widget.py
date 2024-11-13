@@ -5,7 +5,7 @@ import math
 
 
 
-class analog_clock(Canvas):
+class AnalogClock(Canvas):
     
     def __init__(self, parent, *args, **kwargs):
         
@@ -58,9 +58,9 @@ class analog_clock(Canvas):
         self.after(1000, self.clock_update)
         
         
-root = Tk()
-analog_clock = analog_clock(root, width = 400, height = 400)
-analog_clock.pack()
-root.mainloop()
+# root = Tk()
+# analog_clock = analog_clock(root, width = 400, height = 400)
+# analog_clock.pack()
+# root.mainloop()
 
 
