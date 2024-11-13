@@ -1,3 +1,21 @@
+################################################
+# Programmeerimine I
+# 2024/2025 sügissemester
+#
+# Projekt
+# Teema: Äratuskell naljakate lisafunktsioonidega
+#
+#
+# Autorid: Kert Jalukse, Tristan Šaraškin
+#
+# mõningane eeskuju: 
+# kella loomisel: https://github.com/siri-n-shetty/Analog-Clock
+#
+# Lisakommentaar (nt käivitusjuhend):
+# Hetkel käivita käsuga python3 main.py
+# todo leida mugavam viis jooksutamiseks (a.la kukeleegu.desktop fail)
+##################################################
+
 from tkinter import *
 from tkinter import ttk
 import time
