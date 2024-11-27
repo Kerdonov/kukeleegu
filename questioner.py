@@ -5,8 +5,7 @@ class Questioner():
     def __init__(self):
         questions = [self.question_pipe, self.question_time_performance, self.question_stack_pointer, self.question_branching]
         question = questions[randint(0, len(questions)-1)]
-        text, true_answer = question()
-        self.answer_question(text, true_answer)
+        self.text, self.true_answer = question()
     
     def question_pipe(self):
         computer_speed = round(uniform(2, 5), 2)
@@ -39,14 +38,5 @@ class Questioner():
         question_text = "Meie programmi dünaamilises töövoos on " + str(branch_commands) + "% hargnemise käske. Kasutatakse hargnemise ajatamist (delayed branching) ühe ajatuspesaga (delay slot). Arvuta, mitu korda kiireneb sellise programmi käivitamine, kui kompilaator suudab ajatuspesa täita " + str(delay_slot_fill) + "% juhtudest (võrreldes ajatuspesa kasutamata jätmise olukorraga)? Vastus esita kahe komakoha täpsusega."
         return (question_text, answer_true)
 
-    def answer_question(self, question_text, answer_true):
-        print(answer_true)
-        while True:
-            user_answer = input(question_text)
-            if user_answer == answer_true:
-                print('Oige vastus!')
-                break
-            else:
-                print('Proovi uuesti!')
-    
-    #todo create method for taking input
+    def answer_question(self, user_answer):
+        return user_answer == self.true_answer
