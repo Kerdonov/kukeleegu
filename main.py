@@ -35,8 +35,6 @@ def main():
     alarms = AlarmManager(root)
     alarms.place(x=500, y=0)
 
-    alarms.new_alarm(Alarm(15, 54))
-
     root.mainloop()
 
 if __name__ == '__main__':
