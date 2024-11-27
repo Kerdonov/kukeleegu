@@ -20,13 +20,22 @@ from tkinter import *
 from tkinter import ttk
 import time
 import math
+
 from clock_widget import AnalogClock
+from alarm import Alarm, RandomAlarm
+from alarm_manager import AlarmManager
 
 def main():
     root = Tk()
     root.title('kukeleegu')
     root.geometry('900x410')
     AnalogClock(root, width=400, height=400).place(x=0, y=0)
+
+    # todo new alarm button/popup
+    alarms = AlarmManager(root)
+    alarms.place(x=500, y=0)
+
+    alarms.new_alarm(Alarm(15, 54))
 
     root.mainloop()
 
