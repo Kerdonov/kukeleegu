@@ -2,19 +2,19 @@ import tkinter as tk
 from alarm import Alarm, RandomAlarm
 
 class AlarmWidget(tk.Frame):
-    def __init__(self, parent, alarm, is_random, label="", width=400, height=80):
-        background = "#FF0000" if is_random else "#000000"
+    def __init__(self, parent, alarm, width=400, height=80, time_label=None):
+        is_random = time_label != None
+        background = "#FF0000" if is_random else "#FFFFFF"
         tk.Frame.__init__(self, parent, width=width, height=height, bg=background)
         self.alarm = alarm
         self.parent = parent
         self.alarm.enable()
         self.enabled = True
-
-        if label == "":
-            label = f"{alarm.name}: {alarm.time.hour}:{alarm.time.minute}"
+        if not is_random:
+            time_label = f"{alarm.time.hour:0>2d}:{alarm.time.minute:0>2d}"
 
         alarm_widget = tk.Frame(self, width=400, height=80, bg=background)
-        tk.Label(self, text=label, anchor="w").pack(side=tk.LEFT)
+        tk.Label(self, text=f"{self.alarm.name} @ {time_label}", anchor="w").pack(side=tk.LEFT)
         self.toggle_button = tk.Button(self, text="ON", command=self.toggle_alarm, bg=background)
         self.toggle_button.pack(side=tk.RIGHT)
         tk.Button(self, text="trash", command=self.remove_alarm, bg=background).pack(side=tk.RIGHT)
@@ -39,7 +39,6 @@ class AlarmManager(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent, width=400, height=400)
         self.widgets = []
-        # todo create alarm creating widget
         self.new_alarm_is_random = False
 
         self.alarm_hour_var = tk.IntVar()
@@ -73,10 +72,12 @@ class AlarmManager(tk.Frame):
     def new_alarm(self):
         if self.new_alarm_is_random:
             alarm = RandomAlarm(self.alarm_hour_var.get(), self.alarm_minute_var.get(), name=self.alarm_name_var.get())
+            label = f"{self.alarm_hour_var.get():02d}:{self.alarm_minute_var.get():02d}"
         else:
             alarm = Alarm(self.alarm_hour_var.get(), self.alarm_minute_var.get(), name=self.alarm_name_var.get())
+            label = None
 
-        widget = AlarmWidget(self, alarm, self.new_alarm_is_random, label=f"{self.alarm_name_var.get()}: {self.alarm_hour_var.get()}:{self.alarm_minute_var.get()}")
+        widget = AlarmWidget(self, alarm, time_label=label)
         widget.pack()
         self.widgets.append(widget)
 

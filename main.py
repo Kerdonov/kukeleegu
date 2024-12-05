@@ -31,9 +31,8 @@ def main():
     root.geometry('900x410')
     AnalogClock(root, width=400, height=400).place(x=0, y=0)
 
-    # todo new alarm button/popup
-    alarms = AlarmManager(root)
-    alarms.place(x=500, y=0)
+    alarm_manager = AlarmManager(root)
+    alarm_manager.place(x=500, y=0)
 
     root.mainloop()
 
