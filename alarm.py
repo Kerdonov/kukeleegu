@@ -1,3 +1,5 @@
+from tkinter import *
+from tkinter import ttk
 from datetime import datetime, timedelta
 from time import sleep
 from multiprocessing import Process, Event
@@ -33,6 +35,16 @@ class Alarm:
         self.__proc.join()
         self.enable()
 
+    def popup(self):
+        popup_window = Tk()
+        popup_window.geometry('400x200')
+        popup_window.title('Question')
+        q_text = Label(popup_window, text='test')
+        q_text.pack(side='top')
+        answer_button = Button(popup_window, text='Answer', command=popup_window.destroy)
+        answer_button.pack()
+        popup_window.mainloop()
+
     def __ring(self):
         # todo start playing alarm
         print(f"BEEP BEEP BEEP {self.name}")
@@ -42,6 +54,7 @@ class Alarm:
     # ? bind alarm disable to this method
     def disable(self):
         if self.ringing.is_set():
+            self.popup()
             # todo question to disable alarm
             self.finished.set()
             self.__proc.join()
