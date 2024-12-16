@@ -13,6 +13,7 @@
 #
 # Lisakommentaar (nt käivitusjuhend):
 # Hetkel käivita käsuga python3 main.py
+# ! NB! dependencies.txt
 # todo leida mugavam viis jooksutamiseks (a.la kukeleegu.desktop fail)
 ##################################################
 

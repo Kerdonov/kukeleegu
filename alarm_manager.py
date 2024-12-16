@@ -37,9 +37,9 @@ class AlarmWidget(tk.Frame):
             self.enabled = True
             self.toggle_button.config(text="  ")
         
-    def remove_alarm(self):
-        self.alarm.disable()
-        self.parent.remove_alarm(self)
+    def remove_alarm(self) -> bool:
+        if self.alarm.disable():
+            self.parent.remove_alarm(self)
 
 # https://stackoverflow.com/questions/30489308/creating-a-custom-widget-in-tkinter
 class AlarmManager(tk.Frame):
@@ -56,7 +56,7 @@ class AlarmManager(tk.Frame):
         self.alarm_hour_var = tk.IntVar()
         self.alarm_minute_var = tk.IntVar()
         self.alarm_name_var = tk.StringVar()
-        self.alarm_file_name = "none"
+        self.alarm_file_name = "wakey-wakey.mp3" # default value
 
         new_alarm_widget = tk.Frame(self, width=400, height=80)
         hour_input = tk.Entry(new_alarm_widget, width=5, textvariable=self.alarm_hour_var)
@@ -96,10 +96,16 @@ class AlarmManager(tk.Frame):
     
     def new_alarm(self):
         if self.new_alarm_is_random:
-            alarm = RandomAlarm(self.alarm_hour_var.get(), self.alarm_minute_var.get(), name=self.alarm_name_var.get())
+            alarm = RandomAlarm(self.alarm_hour_var.get(), \
+                self.alarm_minute_var.get(), \
+                name=self.alarm_name_var.get(), \
+                alarm_file_name=self.alarm_file_name)
             label = f"{self.alarm_hour_var.get():02d}:{self.alarm_minute_var.get():02d}"
         else:
-            alarm = Alarm(self.alarm_hour_var.get(), self.alarm_minute_var.get(), name=self.alarm_name_var.get())
+            alarm = Alarm(self.alarm_hour_var.get(), \
+                self.alarm_minute_var.get(), \
+                name=self.alarm_name_var.get(), \
+                alarm_file_name=self.alarm_file_name)
             label = None
 
         widget = AlarmWidget(self, alarm, time_label=label)
@@ -108,5 +114,5 @@ class AlarmManager(tk.Frame):
 
 
     def remove_alarm(self, alarm):
-        self.widgets.remove(alarm)
-        alarm.destroy()
+        if self.widgets.remove(alarm):
+            alarm.destroy()
