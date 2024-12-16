@@ -53,8 +53,8 @@ class AlarmManager(tk.Frame):
         self.widgets = [] # holds child widgets (for each alarm)
         self.new_alarm_is_random = False
 
-        self.alarm_hour_var = tk.IntVar()
-        self.alarm_minute_var = tk.IntVar()
+        self.alarm_hour_var = tk.StringVar()
+        self.alarm_minute_var = tk.StringVar()
         self.alarm_name_var = tk.StringVar()
         self.alarm_file_name = "wakey-wakey.mp3" # default value
 
@@ -96,14 +96,14 @@ class AlarmManager(tk.Frame):
     
     def new_alarm(self):
         if self.new_alarm_is_random:
-            alarm = RandomAlarm(self.alarm_hour_var.get(), \
-                self.alarm_minute_var.get(), \
+            alarm = RandomAlarm(int(self.alarm_hour_var.get()), \
+                int(self.alarm_minute_var.get()), \
                 name=self.alarm_name_var.get(), \
                 alarm_file_name=self.alarm_file_name)
-            label = f"{self.alarm_hour_var.get():02d}:{self.alarm_minute_var.get():02d}"
+            label = f"{int(self.alarm_hour_var.get()):02d}:{int(self.alarm_minute_var.get()):02d}"
         else:
-            alarm = Alarm(self.alarm_hour_var.get(), \
-                self.alarm_minute_var.get(), \
+            alarm = Alarm(int(self.alarm_hour_var.get()), \
+                int(self.alarm_minute_var.get()), \
                 name=self.alarm_name_var.get(), \
                 alarm_file_name=self.alarm_file_name)
             label = None
@@ -114,5 +114,5 @@ class AlarmManager(tk.Frame):
 
 
     def remove_alarm(self, alarm):
-        if self.widgets.remove(alarm):
-            alarm.destroy()
+        self.widgets.remove(alarm)
+        alarm.destroy()

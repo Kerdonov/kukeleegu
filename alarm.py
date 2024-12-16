@@ -3,6 +3,7 @@ from time import sleep
 from multiprocessing import Process, Event
 from random import randrange
 import vlc
+from alarm_gui import AlarmGui
 
 
 class Alarm:
@@ -35,7 +36,7 @@ class Alarm:
         self.enable()
 
     def __ring(self):
-        # todo activate pop-up window
+        AlarmGui(self)
         player = vlc.Instance()
         media_list = player.media_list_new()
         media_player = player.media_list_player_new()
@@ -50,12 +51,13 @@ class Alarm:
 
     # ? bind alarm disable to this method (use sudo_mode)
     def disable(self, sudo_mode=False) -> bool:
-        if self.ringing.is_set() and sudo_mode:
-            self.finished.set()
-            self.__proc.join()
-            return True
-        elif self.ringing.is_set and not sudo_mode:
-            return False
+        if self.ringing.is_set():
+            if sudo_mode:
+                self.finished.set()
+                self.__proc.join()
+                return True
+            else:
+                return False
         else:
             self.__proc.terminate()
             print(f"Alarm {self.name} at {self.time} disabled!!!")
