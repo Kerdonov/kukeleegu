@@ -36,7 +36,6 @@ class Alarm:
         self.enable()
 
     def __ring(self):
-        AlarmGui(self)
         player = vlc.Instance()
         media_list = player.media_list_new()
         media_player = player.media_list_player_new()
@@ -53,6 +52,7 @@ class Alarm:
     def disable(self, sudo_mode=False) -> bool:
         if self.ringing.is_set():
             if sudo_mode:
+                self.ringing.clear()
                 self.finished.set()
                 self.__proc.join()
                 return True
