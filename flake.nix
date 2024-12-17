@@ -16,9 +16,10 @@
 
     devShells.x86_64-linux.default = pkgs.mkShell {
       buildInputs = [
-        pkgs.python312Full
-        pkgs.python312Packages.python-vlc
+        self.packages.x86_64-linux.python3
+        self.packages.x86_64-linux.python-vlc
       ];
+      shellHook = "python3 ./main.py";
     };
   };
 }

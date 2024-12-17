@@ -3,7 +3,6 @@ from time import sleep
 from multiprocessing import Process, Event
 from random import randrange
 import vlc
-from alarm_gui import AlarmGui
 
 
 class Alarm:

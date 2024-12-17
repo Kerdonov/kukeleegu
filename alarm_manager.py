@@ -28,9 +28,10 @@ class AlarmWidget(tk.Frame):
 
 
     def toggle_alarm(self, sudo_mode=False):
-        if self.enabled and self.alarm.disable(sudo_mode=sudo_mode):
-            self.enabled = False
-            self.toggle_button.config(text="  ")
+        if self.enabled:
+            if self.alarm.disable(sudo_mode=sudo_mode):
+                self.enabled = False
+                self.toggle_button.config(text="  ")
         else:
             self.alarm.enable()
             self.enabled = True
