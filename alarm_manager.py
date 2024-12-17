@@ -4,7 +4,7 @@ from tkinter import filedialog
 from alarm import Alarm, RandomAlarm
 
 class AlarmWidget(tk.Frame):
-    def __init__(self, parent, alarm, width=400, height=80, time_label=None):
+    def __init__(self, parent, alarm, width=360, height=40, time_label=None):
         # random alarm -> red background, else normal background
         is_random = time_label != None
         background = "red1" if is_random else "white"
@@ -21,15 +21,14 @@ class AlarmWidget(tk.Frame):
             time_label = f"{alarm.time.hour:0>2d}:{alarm.time.minute:0>2d}"
 
         # set widgets
-        tk.Label(self, text=f"{self.alarm.name} @ {time_label}", anchor="w").pack(side=tk.LEFT)
-        tk.Button(self, text=" ", command=self.remove_alarm, bg=background).pack(side=tk.RIGHT)
+        tk.Label(self, text=f"{self.alarm.name} @ {time_label}", anchor="w").place(x=0, y=0, height=40, width=240)
         self.toggle_button = tk.Button(self, text="  ", command=self.toggle_alarm, bg=background)
-        self.toggle_button.pack(side=tk.RIGHT)
+        self.toggle_button.place(x=240, y=0, height=40, width=60)
+        tk.Button(self, text=" ", command=self.remove_alarm, bg=background).place(x=300, y=0, height=40, width=60)
 
 
-    def toggle_alarm(self):
-        if self.enabled:
-            self.alarm.disable()
+    def toggle_alarm(self, sudo_mode=False):
+        if self.enabled and self.alarm.disable(sudo_mode=sudo_mode):
             self.enabled = False
             self.toggle_button.config(text="  ")
         else:
@@ -43,22 +42,23 @@ class AlarmWidget(tk.Frame):
 
 # https://stackoverflow.com/questions/30489308/creating-a-custom-widget-in-tkinter
 class AlarmManager(tk.Frame):
-    def __init__(self, parent):
-        # unhinged hack to change default font (kill me now)
+    def __init__(self, parent, width=360, height=740):
+        # unhinged hack to change default font (very fun)
         self.defaultFont = font.nametofont("TkDefaultFont")
-        self.defaultFont.configure(size=12)
+        self.defaultFont.configure(size=15)
 
         # initialize parent
-        tk.Frame.__init__(self, parent, width=400, height=400)
+        tk.Frame.__init__(self, parent, width=height, height=height)
         self.widgets = [] # holds child widgets (for each alarm)
         self.new_alarm_is_random = False
 
-        self.alarm_hour_var = tk.IntVar()
-        self.alarm_minute_var = tk.IntVar()
+        self.alarm_hour_var = tk.StringVar()
+        self.alarm_minute_var = tk.StringVar()
         self.alarm_name_var = tk.StringVar()
         self.alarm_file_name = "wakey-wakey.mp3" # default value
 
-        new_alarm_widget = tk.Frame(self, width=400, height=80)
+        # new alarm widget
+        new_alarm_widget = tk.Frame(self, width=360, height=80)
         hour_input = tk.Entry(new_alarm_widget, width=5, textvariable=self.alarm_hour_var)
         minute_input = tk.Entry(new_alarm_widget, width=5, textvariable=self.alarm_minute_var)
         name_input = tk.Entry(new_alarm_widget, width=10, textvariable=self.alarm_name_var)
@@ -67,12 +67,12 @@ class AlarmManager(tk.Frame):
         self.is_random_button = tk.Button(new_alarm_widget, text="󰒞 ", command=self.toggle_random)
         new_alarm_button = tk.Button(new_alarm_widget, text=" ", command=self.new_alarm)
 
-        self.choose_audio_button.pack(side=tk.BOTTOM)
-        hour_input.pack(side=tk.LEFT)
-        minute_input.pack(side=tk.LEFT)
-        name_input.pack(side=tk.LEFT)
-        self.is_random_button.pack(side=tk.LEFT)
-        new_alarm_button.pack(side=tk.RIGHT)
+        self.choose_audio_button.place(x=0, y=40, width=360, height=40)
+        hour_input.place(x=0, y=0, height=40, width=60)
+        minute_input.place(x=60, y=0, height=40, width=60)
+        name_input.place(x=120, y=0, height=40, width=120)
+        self.is_random_button.place(x=240, y=0, height=40, width=60)
+        new_alarm_button.place(x=300, y=0, height=40, width=60)
 
         new_alarm_widget.pack()
     
@@ -96,14 +96,14 @@ class AlarmManager(tk.Frame):
     
     def new_alarm(self):
         if self.new_alarm_is_random:
-            alarm = RandomAlarm(self.alarm_hour_var.get(), \
-                self.alarm_minute_var.get(), \
+            alarm = RandomAlarm(int(self.alarm_hour_var.get()), \
+                int(self.alarm_minute_var.get()), \
                 name=self.alarm_name_var.get(), \
                 alarm_file_name=self.alarm_file_name)
-            label = f"{self.alarm_hour_var.get():02d}:{self.alarm_minute_var.get():02d}"
+            label = f"{int(self.alarm_hour_var.get()):02d}:{int(self.alarm_minute_var.get()):02d}"
         else:
-            alarm = Alarm(self.alarm_hour_var.get(), \
-                self.alarm_minute_var.get(), \
+            alarm = Alarm(int(self.alarm_hour_var.get()), \
+                int(self.alarm_minute_var.get()), \
                 name=self.alarm_name_var.get(), \
                 alarm_file_name=self.alarm_file_name)
             label = None
@@ -114,5 +114,5 @@ class AlarmManager(tk.Frame):
 
 
     def remove_alarm(self, alarm):
-        if self.widgets.remove(alarm):
-            alarm.destroy()
+        self.widgets.remove(alarm)
+        alarm.destroy()

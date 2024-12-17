@@ -18,22 +18,22 @@
 ##################################################
 
 from tkinter import *
-from tkinter import ttk
-import time
-import math
 
 from clock_widget import AnalogClock
-from alarm import Alarm, RandomAlarm
 from alarm_manager import AlarmManager
+from alarm_gui import AlarmGui
 
 def main():
     root = Tk()
     root.title('kukeleegu')
-    root.geometry('900x410')
+    root.geometry('760x740')
     AnalogClock(root, width=400, height=400).place(x=0, y=0)
 
     alarm_manager = AlarmManager(root)
-    alarm_manager.place(x=500, y=0)
+    alarm_manager.place(x=400, y=0)
+
+    alarm_gui = AlarmGui(root, alarm_manager)
+    alarm_gui.place(x=0, y=400)
 
     root.mainloop()
 
