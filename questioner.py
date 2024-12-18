@@ -1,7 +1,7 @@
 from random import *
 
+# generates questions and answers on every instanciation
 class Questioner():
-
     def __init__(self):
         questions = [self.question_pipe, self.question_time_performance, self.question_stack_pointer, self.question_branching]
         question = questions[randint(0, len(questions)-1)]

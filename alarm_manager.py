@@ -6,7 +6,7 @@ from alarm import Alarm, RandomAlarm
 class AlarmWidget(tk.Frame):
     def __init__(self, parent, alarm, width=360, height=40, time_label=None):
         # random alarm -> red background, else normal background
-        is_random = time_label != None
+        is_random = time_label != None # defined in AlarmManager::new_alarm()
         background = "red1" if is_random else "white"
 
         # initialize parent widget
@@ -27,6 +27,9 @@ class AlarmWidget(tk.Frame):
         tk.Button(self, text=" ", command=self.remove_alarm, bg=background).place(x=300, y=0, height=40, width=60)
 
 
+    # sudo_mode == True => called from AlarmGui class
+    # sudo_mode == False => otherwise
+    # (see Alarm::disable() for more)
     def toggle_alarm(self, sudo_mode=False):
         if self.enabled:
             if self.alarm.disable(sudo_mode=sudo_mode):
@@ -36,14 +39,16 @@ class AlarmWidget(tk.Frame):
             self.alarm.enable()
             self.enabled = True
             self.toggle_button.config(text="  ")
-        
+    
+    # if alarm disabling is successful, then calls parent
+    # (AlarmManager) class method to remove itself
     def remove_alarm(self) -> bool:
         if self.alarm.disable():
             self.parent.remove_alarm(self)
 
 # https://stackoverflow.com/questions/30489308/creating-a-custom-widget-in-tkinter
 class AlarmManager(tk.Frame):
-    def __init__(self, parent, width=360, height=740):
+    def __init__(self, parent, width=360, height=760):
         # unhinged hack to change default font (very fun)
         self.defaultFont = font.nametofont("TkDefaultFont")
         self.defaultFont.configure(size=15)
@@ -58,7 +63,7 @@ class AlarmManager(tk.Frame):
         self.alarm_name_var = tk.StringVar()
         self.alarm_file_name = "wakey-wakey.mp3" # default value
 
-        # new alarm widget
+        # create-new-alarm widget
         new_alarm_widget = tk.Frame(self, width=360, height=80)
         hour_input = tk.Entry(new_alarm_widget, width=5, textvariable=self.alarm_hour_var)
         minute_input = tk.Entry(new_alarm_widget, width=5, textvariable=self.alarm_minute_var)
@@ -75,16 +80,18 @@ class AlarmManager(tk.Frame):
         self.is_random_button.place(x=240, y=0, height=40, width=60)
         new_alarm_button.place(x=300, y=0, height=40, width=60)
 
-        new_alarm_widget.pack()
+        new_alarm_widget.place(x=0, y=0)
     
     def open_music_file(self):
         filetypes = [('mp3 files', '*.mp3')]
         self.alarm_file_name = filedialog.askopenfilename(title='Choose alarm', filetypes=filetypes)
-        # I'm so sorry :(
+        # shortname is displayed in GUI
+        # this syntax ensures that it works on both Unix-based
+        # and Windows filepaths (didn't want to use os.path)
         shortname = min(self.alarm_file_name.split("/")[-1], \
             self.alarm_file_name.split("\\")[-1], \
             key=lambda x: len(x))
-        self.choose_audio_button.configure(text=f"󰝚 {shortname}")
+        self.choose_audio_button.config(text=f"󰝚 {shortname}")
 
 
     def toggle_random(self):
@@ -96,24 +103,20 @@ class AlarmManager(tk.Frame):
             self.new_alarm_is_random = True
     
     def new_alarm(self):
+        hour = int(self.alarm_hour_var.get())
+        minute = int(self.alarm_minute_var.get())
         if self.new_alarm_is_random:
-            alarm = RandomAlarm(int(self.alarm_hour_var.get()), \
-                int(self.alarm_minute_var.get()), \
-                name=self.alarm_name_var.get(), \
-                alarm_file_name=self.alarm_file_name)
+            alarm = RandomAlarm(hour, minute, name=self.alarm_name_var.get(), alarm_file_name=self.alarm_file_name)
             label = f"{int(self.alarm_hour_var.get()):02d}:{int(self.alarm_minute_var.get()):02d}"
         else:
-            alarm = Alarm(int(self.alarm_hour_var.get()), \
-                int(self.alarm_minute_var.get()), \
-                name=self.alarm_name_var.get(), \
-                alarm_file_name=self.alarm_file_name)
+            alarm = Alarm(hour, minute, name=self.alarm_name_var.get(), alarm_file_name=self.alarm_file_name)
             label = None
 
         widget = AlarmWidget(self, alarm, time_label=label)
         widget.pack()
         self.widgets.append(widget)
 
-
+    # called from AlarmWidget class
     def remove_alarm(self, alarm):
         self.widgets.remove(alarm)
         alarm.destroy()

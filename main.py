@@ -26,12 +26,16 @@ from alarm_gui import AlarmGui
 def main():
     root = Tk()
     root.title('kukeleegu')
-    root.geometry('760x740')
+    root.geometry('760x760')
+
+    # clock widget
     AnalogClock(root, width=400, height=400).place(x=0, y=0)
 
+    # alarm widgets
     alarm_manager = AlarmManager(root)
     alarm_manager.place(x=400, y=0)
 
+    # question widget
     alarm_gui = AlarmGui(root, alarm_manager)
     alarm_gui.place(x=0, y=400)
 
