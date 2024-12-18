@@ -80,7 +80,7 @@ class AlarmManager(tk.Frame):
         self.is_random_button.place(x=240, y=0, height=40, width=60)
         new_alarm_button.place(x=300, y=0, height=40, width=60)
 
-        new_alarm_widget.place(x=0, y=0)
+        new_alarm_widget.pack()
     
     def open_music_file(self):
         filetypes = [('mp3 files', '*.mp3')]
